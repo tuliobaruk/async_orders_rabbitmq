@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -9,28 +11,55 @@ services:
       - RABBITMQ_DEFAULT_PASS=admin
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
 
-  order-consumer:
+  orders-service:
     build:
-      context: ./order-consumer
+      context: ./orders-service/ecommerce
     environment:
-      - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=admin
+      - SPRING_RABBITMQ_PASSWORD=admin
+      - SPRING_RABBITMQ_PORT=5672
     depends_on:
-      rabbitmq:
-        condition: service_healthy
-    volumes:
-      - ./order-consumer:/app
-    
-  notify-service:
-    build:
-      context: ./notify-service
-    environment:
-      - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    volumes:
-      - ./notify-service:/app
+      - rabbitmq
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  # order-consumer:
+  #   build:
+  #     context: ./orders-consumer
+  #   environment:
+  #     - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
+  #   depends_on:
+  #     - rabbitmq
+  #   volumes:
+  #     - ./order-consumer:/app
+  #   networks:
+  #     - app-network
+
+  # notify-service:
+  #   build:
+  #     context: ./notify-service
+  #   environment:
+  #     - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
+  #   depends_on:
+  #     - rabbitmq
+  #   volumes:
+  #     - ./notify-service:/app
+  #   networks:
+  #     - app-network
 
 volumes:
   rabbitmq_data:
+
+networks:
+  app-network:
+    driver: bridge
