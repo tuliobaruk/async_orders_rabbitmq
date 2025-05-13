@@ -50,6 +50,8 @@ services:
       context: ./notify-service
     environment:
       - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
+    volumes:
+      - ./orders-consumer/invoices:/app/data/invoices
     depends_on:
       - rabbitmq
     networks:

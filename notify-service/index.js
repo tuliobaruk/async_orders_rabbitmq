@@ -9,7 +9,9 @@ dotenv.config();
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672';
 const ORDERS_QUEUE = 'orders-queue';
 const NOTIFICATIONS_QUEUE = 'notifications-queue';
-const PROCESSED_ORDERS_SET = new Set();
+
+// Armazenar pedidos que já receberam o email inicial
+const NOTIFIED_ORDERS = new Set();
 
 class NotifyService {
   constructor() {
@@ -126,16 +128,15 @@ async function startService() {
     const notifyService = new NotifyService();
     
     console.log(`Serviço de notificações conectado ao RabbitMQ. Aguardando mensagens...`);
-    
+        
     channel.consume(ORDERS_QUEUE, async (msg) => {
       if (!msg) return;
       
       try {
         const orderData = JSON.parse(msg.content.toString());
-        const orderId = orderData.id || orderData.orderId || JSON.stringify(orderData);
+        const orderId = orderData.id || JSON.stringify(orderData).substring(0, 50);
         
-        if (PROCESSED_ORDERS_SET.has(orderId)) {
-          console.log(`Pedido ${orderId} já teve email enviado. Ignorando.`);
+        if (NOTIFIED_ORDERS.has(orderId)) {
           channel.reject(msg, true);
           return;
         }
@@ -144,23 +145,20 @@ async function startService() {
         
         await notifyService.sendOrderReceivedEmail(orderData);
         
-        PROCESSED_ORDERS_SET.add(orderId);
-        
-        if (PROCESSED_ORDERS_SET.size > 1000) {
-          const oldestKey = Array.from(PROCESSED_ORDERS_SET)[0];
-          PROCESSED_ORDERS_SET.delete(oldestKey);
-        }
+        NOTIFIED_ORDERS.add(orderId);
         
         channel.reject(msg, true);
-        
         console.log(`Email de recebimento enviado para ${orderId} e mensagem devolvida à fila para processamento`);
+        
       } catch (error) {
         console.error('Erro ao processar novo pedido:', error.message);
         
         const isRetryable = !error.message.includes('no recipients');
         channel.reject(msg, isRetryable);
         
-        console.log(`Erro ao processar pedido. Mensagem ${isRetryable ? 'devolvida para a fila' : 'descartada'}`);
+        if (!isRetryable) {
+          console.log('Mensagem descartada devido a erro não recuperável');
+        }
       }
     }, { noAck: false });
     
@@ -169,7 +167,7 @@ async function startService() {
       
       try {
         const orderData = JSON.parse(msg.content.toString());
-        const orderId = orderData.orderId || orderData.id || JSON.stringify(orderData);
+        const orderId = orderData.orderId || orderData.id || JSON.stringify(orderData).substring(0, 50);
         
         console.log(`Notificação de processamento recebida: ${orderId}`);
         
@@ -184,7 +182,11 @@ async function startService() {
         const isRetryable = !error.message.includes('no recipients');
         channel.reject(msg, isRetryable);
         
-        console.log(`Erro ao processar notificação. Mensagem ${isRetryable ? 'devolvida para a fila' : 'descartada'}`);
+        if (!isRetryable) {
+          console.log('Notificação descartada devido a erro não recuperável');
+        } else {
+          console.log('Notificação devolvida à fila para nova tentativa');
+        }
       }
     }, { noAck: false });
     
