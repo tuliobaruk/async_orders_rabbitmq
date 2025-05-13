@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -42,6 +40,8 @@ services:
       - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
     depends_on:
       - rabbitmq
+    volumes:
+      - ./orders-consumer/invoices:/app/data/invoices
     networks:
       - app-network
 
