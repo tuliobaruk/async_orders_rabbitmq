@@ -35,29 +35,25 @@ services:
     networks:
       - app-network
 
-  # order-consumer:
-  #   build:
-  #     context: ./orders-consumer
-  #   environment:
-  #     - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
-  #   depends_on:
-  #     - rabbitmq
-  #   volumes:
-  #     - ./order-consumer:/app
-  #   networks:
-  #     - app-network
+  order-consumer:
+    build:
+      context: ./orders-consumer
+    environment:
+      - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
 
-  # notify-service:
-  #   build:
-  #     context: ./notify-service
-  #   environment:
-  #     - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
-  #   depends_on:
-  #     - rabbitmq
-  #   volumes:
-  #     - ./notify-service:/app
-  #   networks:
-  #     - app-network
+  notify-service:
+    build:
+      context: ./notify-service
+    environment:
+      - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
 
 volumes:
   rabbitmq_data:
