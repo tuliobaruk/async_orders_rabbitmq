@@ -17,6 +17,8 @@ services:
       retries: 5
       start_period: 10s
       timeout: 10s
+    networks:
+      - app-network
 
   orders-service:
     build:

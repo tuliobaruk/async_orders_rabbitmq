@@ -1,7 +1,8 @@
-package com.orders.producer.service;
+package com.orders.producer.ecommerce.service;
 
-import com.orders.producer.model.Order;
-import com.orders.producer.config.RabbitMQConfig;
+import com.orders.producer.ecommerce.config.RabbitMQConfig;
+import com.orders.producer.ecommerce.model.Order;
+
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 

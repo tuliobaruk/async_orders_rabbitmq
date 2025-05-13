@@ -1,4 +1,4 @@
-package com.orders.producer.model;
+package com.orders.producer.ecommerce.model;
 
 import jakarta.validation.constraints.*;
 import lombok.*;

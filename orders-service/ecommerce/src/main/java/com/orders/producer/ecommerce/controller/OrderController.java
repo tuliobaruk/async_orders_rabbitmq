@@ -1,7 +1,8 @@
-package com.orders.producer.controller;
+package com.orders.producer.ecommerce.controller;
 
-import com.orders.producer.model.Order;
-import com.orders.producer.service.OrderService;
+import com.orders.producer.ecommerce.model.Order;
+import com.orders.producer.ecommerce.service.OrderService;
+
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
