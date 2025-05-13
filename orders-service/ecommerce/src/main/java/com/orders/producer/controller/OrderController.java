@@ -1,0 +1,24 @@
+package com.orders.producer.controller;
+
+import com.orders.producer.model.Order;
+import com.orders.producer.service.OrderService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/pedidos")
+public class OrderController {
+
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @PostMapping
+    public ResponseEntity<String> createOrder(@Valid @RequestBody Order order) {
+        orderService.sendOrder(order);
+        return ResponseEntity.ok("Pedido enviado para processamento com sucesso");
+    }
+}
