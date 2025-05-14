@@ -3,6 +3,7 @@ const fs = require('fs').promises;
 const fsSync = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+const axios = require('axios');
 
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672';
 const ORDERS_QUEUE = 'orders-queue';
@@ -10,37 +11,62 @@ const NOTIFICATIONS_QUEUE = 'notifications-queue';
 
 const INVOICES_DIR = './data/invoices';
 
-const inventoryDb = {
-  'prod001': { nome: 'Fraulda Surrupiada', available: 50 },
-  'prod002': { nome: 'shortJeans', available: 30 },
-  'prod003': { nome: 'Camiseta Básica', available: 100 },
-  'prod004': { nome: 'Tênis Casual', available: 25 },
-  'prod005': { nome: 'Bolsa Tote', available: 15 },
-};
+const STOCK_API_URL = process.env.STOCK_API_URL || 'http://localhost:3001';
 
 async function checkAvailability(productId, quantity) {
-  const product = inventoryDb[productId];
-  if (!product) {
-    throw new Error(`Produto não encontrado: ${productId}`);
+  try {
+    const response = await axios.get(`${STOCK_API_URL}/products/${productId}`);
+    const product = response.data;
+    
+    if (!product) {
+      throw new Error(`Produto não encontrado: ${productId}`);
+    }
+    
+    if (product.available < quantity) {
+      throw new Error(`Estoque insuficiente para ${product.nome}. Disponível: ${product.available}, Solicitado: ${quantity}`);
+    }
+    
+    return true;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      throw new Error(`Produto não encontrado: ${productId}`);
+    }
+    throw error;
   }
-  
-  if (product.available < quantity) {
-    throw new Error(`Estoque insuficiente para ${product.nome}. Disponível: ${product.available}, Solicitado: ${quantity}`);
-  }
-  
-  return true;
 }
 
 async function updateStock(productId, quantity) {
-  const product = inventoryDb[productId];
-  if (!product) {
-    throw new Error(`Produto não encontrado: ${productId}`);
+  try {
+    const response = await axios.get(`${STOCK_API_URL}/products/${productId}`);
+    const product = response.data;
+    
+    if (!product) {
+      throw new Error(`Produto não encontrado: ${productId}`);
+    }
+    
+    const newAvailable = product.available - quantity;
+    
+    await axios.patch(`${STOCK_API_URL}/products/${productId}`, {
+      available: newAvailable
+    });
+    
+    console.log(`Estoque atualizado para ${product.nome}: ${newAvailable} unidades restantes`);
+    
+    return newAvailable;
+  } catch (error) {
+    console.error(`Erro ao atualizar estoque:`, error.message);
+    throw error;
   }
-  
-  product.available -= quantity;
-  console.log(`Estoque atualizado para ${product.nome}: ${product.available} unidades restantes`);
-  
-  return product.available;
+}
+
+async function getProductInfo(productId) {
+  try {
+    const response = await axios.get(`${STOCK_API_URL}/products/${productId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Erro ao obter informações do produto ${productId}:`, error.message);
+    return null;
+  }
 }
 
 async function validateOrder(order) {
@@ -148,33 +174,23 @@ async function generatePDF(invoiceData, invoiceFilename) {
         .text('Subtotal:', priceX)
         .text(`R$ ${invoiceData.valorTotal.toFixed(2)}`, totalX);
       
-      doc.text('', itemCodeX)
-        .text('', descriptionX)
-        .text('', quantityX)
-        .text('Impostos:', priceX)
-        .text(`R$ ${invoiceData.impostos.totalImpostos.toFixed(2)}`, totalX);
-      
       doc.fontSize(12)
         .text('', itemCodeX)
         .text('', descriptionX)
         .text('', quantityX)
         .text('TOTAL:', priceX)
-        .text(`R$ ${(invoiceData.valorTotal + invoiceData.impostos.totalImpostos).toFixed(2)}`, totalX);
+        .text(`R$ ${(invoiceData.valorTotal).toFixed(2)}`, totalX);
       
-      // Rodapé
       doc.moveDown(4);
       doc.fontSize(8).text('Documento emitido eletronicamente. Validade fiscal conforme regulamentação.', { align: 'center' });
       
-      // Finalizar o documento
       doc.end();
       
-      // Evento para quando o stream terminar
       writeStream.on('finish', () => {
         console.log(`PDF da Nota Fiscal criado em ${pdfFilename}`);
         resolve(pdfFilename);
       });
       
-      // Evento para erro no stream
       writeStream.on('error', (error) => {
         console.error(`Erro ao gerar PDF: ${error.message}`);
         reject(error);
@@ -195,25 +211,23 @@ async function generateInvoice(order) {
     
     const invoiceNumber = `NF-${Date.now()}`;
     
+    const itensWithProductInfo = await Promise.all(order.itens.map(async (item) => {
+      const productInfo = await getProductInfo(item.idProduto);
+      return {
+        idProduto: item.idProduto,
+        nome: productInfo ? productInfo.nome : item.nome || 'Produto',
+        quantidade: item.quantidade,
+        precoUnitario: item.precoUnitario,
+        precoTotal: item.quantidade * item.precoUnitario
+      };
+    }));
+    
     const invoiceContent = {
       invoiceNumber,
       issuedAt: new Date().toISOString(),
       cliente: order.cliente,
-      itens: order.itens.map(item => ({
-        idProduto: item.idProduto,
-        nome: inventoryDb[item.idProduto]?.nome || item.nome || 'Produto',
-        quantidade: item.quantidade,
-        precoUnitario: item.precoUnitario,
-        precoTotal: item.quantidade * item.precoUnitario
-      })),
+      itens: itensWithProductInfo,
       valorTotal: order.valorTotal,
-      impostos: {
-        totalImpostos: order.valorTotal * 0.18,
-        detalhesImpostos: {
-          federal: order.valorTotal * 0.10,
-          estadual: order.valorTotal * 0.08
-        }
-      }
     };
     
     const invoiceFilename = path.join(INVOICES_DIR, `${invoiceNumber}.json`);
@@ -277,15 +291,20 @@ async function processOrder(order, channel) {
 
 async function sendNotification(order, invoiceResult, channel) {
   try {
+    const itensWithProductInfo = await Promise.all(order.itens.map(async (item) => {
+      const productInfo = await getProductInfo(item.idProduto);
+      return {
+        ...item,
+        nome: productInfo ? productInfo.nome : item.nome || 'Produto'
+      };
+    }));
+    
     const notification = {
       orderId: order.id,
       invoiceNumber: invoiceResult.invoiceNumber,
       invoicePdfPath: invoiceResult.pdfPath,
       cliente: order.cliente,
-      itens: order.itens.map(item => ({
-        ...item,
-        nome: inventoryDb[item.idProduto]?.nome || item.nome || 'Produto'
-      })),
+      itens: itensWithProductInfo,
       valorTotal: order.valorTotal,
       processedAt: new Date().toISOString()
     };
