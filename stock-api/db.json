@@ -1,0 +1,39 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "nome": "Fralda Surrupiada",
+      "description": "Fralda premium para bebês exigentes",
+      "price": 89.90,
+      "available": 50
+    },
+    {
+      "id": 2,
+      "nome": "shortJeans",
+      "description": "Short jeans de alta qualidade",
+      "price": 149.90,
+      "available": 30
+    },
+    {
+      "id": 3,
+      "nome": "Camiseta Básica",
+      "description": "Camiseta básica de algodão",
+      "price": 59.90,
+      "available": 100
+    },
+    {
+      "id": 4,
+      "nome": "Tênis Casual",
+      "description": "Tênis casual para uso diário",
+      "price": 199.90,
+      "available": 25
+    },
+    {
+      "id": 5,
+      "nome": "Bolsa Tote",
+      "description": "Bolsa tote elegante e espaçosa",
+      "price": 129.90,
+      "available": 15
+    }
+  ]
+}
