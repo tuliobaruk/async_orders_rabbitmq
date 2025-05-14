@@ -17,9 +17,10 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping
-    public ResponseEntity<String> createOrder(@Valid @RequestBody Order order) {
+    public ResponseEntity<Order> createOrder(@Valid @RequestBody Order order) {
         orderService.sendOrder(order);
-        return ResponseEntity.ok("Pedido enviado para processamento com sucesso");
+        return ResponseEntity.ok(order);
     }
 }
