@@ -38,12 +38,27 @@ services:
       context: ./orders-consumer
     environment:
       - RABBITMQ_URL=amqp://admin:admin@rabbitmq:5672
+      - STOCK_API_URL=http://stock-api:3001
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
+      stock-api:
+        condition: service_started
     volumes:
       - ./orders-consumer/invoices:/app/data/invoices
     networks:
       - app-network
+
+  stock-api:
+      build:
+        context: ./stock-api
+      container_name: ecommerce-stock-api
+      ports:
+        - "3001:3001"
+      volumes:
+        - ./stock-api/db.json:/app/db.json
+      networks:
+        - app-network
 
   notify-service:
     build:
@@ -57,6 +72,18 @@ services:
     networks:
       - app-network
 
+  frontend:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+      container_name: ecommerce-frontend
+      ports:
+        - "80:80"
+      depends_on:
+        - orders-service
+        - stock-api
+      networks:
+        - app-network
 volumes:
   rabbitmq_data:
 
