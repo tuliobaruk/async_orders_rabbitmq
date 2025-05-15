@@ -2,38 +2,73 @@
   "products": [
     {
       "id": 1,
-      "nome": "Fralda Surrupiada",
-      "description": "Fralda premium para bebês exigentes",
-      "price": 89.90,
-      "available": 50
-    },
-    {
+      "nome": "Notebook Dell Inspiron 15",
+      "description": "Notebook com processador Intel Core i5, 8GB RAM, SSD 256GB, tela 15.6” Full HD",
+      "price": 3499.90,
+      "available": 20
+        },
+        {
       "id": 2,
-      "nome": "shortJeans",
-      "description": "Short jeans de alta qualidade",
-      "price": 149.90,
-      "available": 30
-    },
-    {
+      "nome": "Smartphone Samsung Galaxy S23",
+      "description": "Smartphone Android com 128GB, câmera tripla, tela AMOLED 6.1”",
+      "price": 3999.00,
+      "available": 35
+        },
+        {
       "id": 3,
-      "nome": "Camiseta Básica",
-      "description": "Camiseta básica de algodão",
-      "price": 59.90,
-      "available": 100
-    },
-    {
+      "nome": "Fone de Ouvido Bluetooth JBL",
+      "description": "Fone de ouvido sem fio com cancelamento de ruído e bateria de longa duração",
+      "price": 499.90,
+      "available": 50
+        },
+        {
       "id": 4,
-      "nome": "Tênis Casual",
-      "description": "Tênis casual para uso diário",
-      "price": 199.90,
-      "available": 25
-    },
-    {
+      "nome": "Smart TV LG 50” 4K",
+      "description": "Smart TV com resolução 4K, webOS, Wi-Fi integrado e HDR",
+      "price": 2799.00,
+      "available": 10
+        },
+        {
       "id": 5,
-      "nome": "Bolsa Tote",
-      "description": "Bolsa tote elegante e espaçosa",
-      "price": 129.90,
-      "available": 15
+      "nome": "Cafeteira Nespresso Inissia",
+      "description": "Cafeteira de cápsulas compacta, fácil de usar, com reservatório de 0,7L",
+      "price": 399.00,
+      "available": 40
+        },
+        {
+      "id": 6,
+      "nome": "Monitor Samsung 24” LED",
+      "description": "Monitor Full HD, painel IPS, HDMI e ajuste de inclinação",
+      "price": 899.00,
+      "available": 25
+        },
+        {
+      "id": 7,
+      "nome": "Teclado Mecânico Redragon Kumara",
+      "description": "Teclado mecânico compacto, switches Outemu Blue, iluminação LED",
+      "price": 249.90,
+      "available": 60
+        },
+        {
+      "id": 8,
+      "nome": "Mouse Logitech MX Master 3",
+      "description": "Mouse sem fio, recarregável, sensor de alta precisão, Bluetooth/USB",
+      "price": 499.00,
+      "available": 30
+        },
+        {
+      "id": 9,
+      "nome": "Impressora Multifuncional HP DeskJet Ink Advantage",
+      "description": "Impressora, copiadora e scanner, conexão Wi-Fi, impressão econômica",
+      "price": 599.00,
+      "available": 18
+        },
+        {
+      "id": 10,
+      "nome": "Echo Dot 4ª Geração",
+      "description": "Smart speaker com Alexa, som potente, controle por voz",
+      "price": 349.00,
+      "available": 45
     }
   ]
 }
