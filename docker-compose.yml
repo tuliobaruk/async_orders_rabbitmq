@@ -50,15 +50,15 @@ services:
       - app-network
 
   stock-api:
-      build:
-        context: ./stock-api
-      container_name: ecommerce-stock-api
-      ports:
-        - "3001:3001"
-      volumes:
-        - ./stock-api/db.json:/app/db.json
-      networks:
-        - app-network
+    build:
+      context: ./stock-api
+    container_name: ecommerce-stock-api
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./stock-api/db.json:/app/db.json
+    networks:
+      - app-network
 
   notify-service:
     build:
@@ -73,17 +73,26 @@ services:
       - app-network
 
   frontend:
-      build:
-        context: ./frontend
-        dockerfile: Dockerfile
-      container_name: ecommerce-frontend
-      ports:
-        - "80:80"
-      depends_on:
-        - orders-service
-        - stock-api
-      networks:
-        - app-network
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ecommerce-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - orders-service
+      - stock-api
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
 volumes:
   rabbitmq_data:
 
