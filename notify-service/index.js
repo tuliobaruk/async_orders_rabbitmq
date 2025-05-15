@@ -78,7 +78,7 @@ class NotifyService {
 
       const info = await this.transporter.sendMail({
         to: orderData.cliente.email,
-        subject: `Pedido Confirmado #${orderData.idPedido || orderData.id || 'ID-' + Date.now()}`,
+        subject: `Pedido Confirmado #${orderData.idPedido || 'ID-' + Date.now()}`,
         text: `Olá ${orderData.cliente.nome}, sua compra no valor de R$ ${orderData.valorTotal.toFixed(2)} foi processada com sucesso!`,
         html: `
           <h2>Olá ${orderData.cliente.nome},</h2>
@@ -165,15 +165,17 @@ async function startService() {
 
       try {
         const orderData = JSON.parse(msg.content.toString());
-        const orderId = orderData.idPedido || orderData.id || JSON.stringify(orderData).substring(0, 50);
-
-        console.log(`Notificação de processamento recebida: ${orderId}`);
+        const idPedido = orderData.idPedido 
+        console.log(idPedido)
+        console.log(orderData)
+        console.log(orderData.idPedido)
+        console.log(`Notificação de processamento recebida: ${idPedido}`);
 
         await notifyService.sendOrderProcessedEmail(orderData);
 
         channel.ack(msg);
 
-        console.log(`Email de confirmação enviado para ${orderId} e mensagem confirmada`);
+        console.log(`Email de confirmação enviado para ${idPedido} e mensagem confirmada`);
       } catch (error) {
         console.error('Erro ao processar notificação:', error.message);
 

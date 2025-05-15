@@ -280,7 +280,7 @@ async function processOrder(order, channel) {
 
     return {
       success: true,
-      orderId: order.idPedido,
+      idPedido: order.idPedido,
       invoiceNumber: invoiceResult.invoiceNumber,
       invoicePdfPath: invoiceResult.pdfPath
     };
@@ -301,7 +301,7 @@ async function sendNotification(order, invoiceResult, channel) {
     }));
 
     const notification = {
-      orderId: order.idPedido,
+      idPedido: order.idPedido,
       invoiceNumber: invoiceResult.invoiceNumber,
       invoicePdfPath: invoiceResult.pdfPath,
       cliente: order.cliente,
