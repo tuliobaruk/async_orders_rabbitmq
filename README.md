@@ -14,6 +14,7 @@ A arquitetura foi projetada para garantir **entregabilidade de mensagens**, **pe
 ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-ff6600?logo=rabbitmq&logoColor=white)
 [![Redis](https://img.shields.io/badge/Redis-%23DD0031.svg?logo=redis&logoColor=white)](#)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
+[![Nginx](https://img.shields.io/badge/Nginx-0F8C3B?logo=Nginx&logoColor=fff)](#)
 
 ---
 
