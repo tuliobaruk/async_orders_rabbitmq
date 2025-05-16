@@ -16,6 +16,12 @@ A arquitetura foi projetada para garantir **entregabilidade de mensagens**, **pe
 [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
 
 ---
+
+## Diagrama de Arquitetura
+
+[![Diagrama](./docs/Arquitetura.png)](./docs/Arquitetura.png)
+
+---
 ## Pré-requisitos
 
 - **Docker**
@@ -23,6 +29,21 @@ A arquitetura foi projetada para garantir **entregabilidade de mensagens**, **pe
 
 ---
 
+## Estrutura do Projeto
+
+```
+.
+├── docker-compose.yml
+├── frontend/              # Página HTML para interação com a API
+├── notify-service/        # Envia e-mails com Nodemailer
+├── orders-consumer/       # Processa pedidos e gera PDFs com PDFKit
+├── orders-service/        # API Spring Boot para registrar pedidos
+├── stock-api/             # JSON Server simulando banco de dados
+├── README.md
+└── docs/                  # Imagens utilizadas no README.md
+```
+
+---
 
 # Subindo com Docker Compose
 
@@ -49,12 +70,6 @@ PASSWORD_GMAIL="sua_senha_de_aplicativo"
 ```
 
 > 💡 **Importante:** A senha do Gmail deve ser uma **senha de aplicativo**, que pode ser gerada [neste link](https://myaccount.google.com/apppasswords) (com a autenticação em dois fatores ativada na conta).
-
----
-
-## Diagrama de Arquitetura
-
-[![Diagrama](./docs/Arquitetura.png)](./docs/Arquitetura.png)
 
 ---
 
@@ -169,22 +184,6 @@ Uma única página HTML serve como interface para simular o envio de pedidos de 
 ## Mock de Estoque
 
 O diretório `stock-api` contém um servidor **JSON Server** que simula um banco de dados de produtos para consulta e uso nos pedidos.
-
----
-
-## Estrutura do Projeto
-
-```
-.
-├── docker-compose.yml
-├── frontend/              # Página HTML para interação com a API
-├── notify-service/        # Envia e-mails com Nodemailer
-├── orders-consumer/       # Processa pedidos e gera PDFs com PDFKit
-├── orders-service/        # API Spring Boot para registrar pedidos
-├── stock-api/             # JSON Server simulando banco de dados
-├── README.md
-└── docs/                  # Imagens utilizadas no README.md
-```
 
 ---
 ## Exemplo
