@@ -8,14 +8,14 @@ A arquitetura foi projetada para garantir **entregabilidade de mensagens**, **pe
 
 ## Tecnologias Utilizadas
 
-[![Java](https://img.shields.io/badge/Java-%23ED8B00.svg?logo=openjdk&logoColor=white)](#)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?logo=springboot&logoColor=fff)](#)
-[![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?logo=node.js&logoColor=white)](#)
-![RabbitMQ](https://img.shields.io/badge/RabbitMQ-ff6600?logo=rabbitmq&logoColor=white)
-[![Redis](https://img.shields.io/badge/Redis-%23DD0031.svg?logo=redis&logoColor=white)](#)
-[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
-[![Nginx](https://img.shields.io/badge/Nginx-0F8C3B?logo=Nginx&logoColor=fff)](#)
-
+[![Java](https://img.shields.io/badge/Java-21-%23ED8B00.svg?logo=openjdk&logoColor=white)](#)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.5-6DB33F?logo=springboot&logoColor=fff)](#)
+[![NodeJS](https://img.shields.io/badge/Node.js-18.20.8-6DA55F?logo=node.js&logoColor=white)](#)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3.13.7-ff6600?logo=rabbitmq&logoColor=white)
+[![Redis](https://img.shields.io/badge/Redis-8.0.1-%23DD0031.svg?logo=redis&logoColor=white)](#)
+[![Docker](https://img.shields.io/badge/Docker-28.1.1-2496ED?logo=docker&logoColor=fff)](#)
+[![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2.36.0-2496ED?logo=docker&logoColor=fff)](#)
+[![Nginx](https://img.shields.io/badge/Nginx-1.28.0-0F8C3B?logo=Nginx&logoColor=fff)](#)
 ---
 
 ## Diagrama de Arquitetura
